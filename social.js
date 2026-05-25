@@ -4,6 +4,10 @@
 
 // 交友
 function interactAction() {
+    if (!friends.length) {
+        addEvent("暂无好友", false);
+        return;
+    }
     let f = friends[0];
     let add = 5 + Math.random() * 10;
     f.favor += add;
@@ -263,12 +267,4 @@ function openForum() {
     document.body.insertAdjacentHTML("beforeend", html);
 }
 
-// =========================
-// 论坛按钮绑定（使用 window.onload 确保 DOM 加载完成）
-// =========================
-window.onload = function () {
-    let forumBtn = document.getElementById("forumBtn");
-    if (forumBtn) {
-        forumBtn.onclick = openForum;
-    }
-};
+// 注意：论坛按钮绑定已在 init.js 的 bindEvents 中完成
