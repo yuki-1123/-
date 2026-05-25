@@ -24,7 +24,7 @@ function updateBaseUI() {
     document.getElementById("skillTier").innerHTML = player.skillTier;
     document.getElementById("dayDisplay").innerHTML = `📅 第${player.day}天`;
     document.getElementById("apDisplay").innerHTML = `⚡行动点: ${player.actionPoints}/${player.maxActionPoints}`;
-    document.getElementById("ageVal").innerHTML = player.age;
+    document.getElementById("ageVal").innerHTML = Math.floor(player.age);
     document.getElementById("lifeVal").innerHTML = player.lifeSpan;
     document.getElementById("talentVal").innerHTML = player.talent;
     document.getElementById("floorVal").innerHTML = `${player.maxDungeonFloor}层`;
@@ -49,12 +49,13 @@ function updateSkillUI() {
 
 function updateEquipUI() {
     let equipText = "⚔️无装备";
-    if (player.equipped) {
+    if (player.equipped && player.equipped.weapon) {
+        let weapon = player.equipped.weapon;
         let cls = "";
-        if (player.equipped.tier === "极品") cls = "legendary";
-        if (player.equipped.tier === "仙级") cls = "epic";
-        if (player.equipped.tier === "神级") cls = "god";
-        equipText = `<span class="${cls}">⚔️${player.equipped.name}(${player.equipped.tier})</span>`;
+        if (weapon.tier === "极品") cls = "legendary";
+        if (weapon.tier === "仙级") cls = "epic";
+        if (weapon.tier === "神级") cls = "god";
+        equipText = `<span class="${cls}">⚔️${weapon.name}(${weapon.tier})</span>`;
     }
     document.getElementById("equipBadge").innerHTML = equipText;
 }
@@ -68,6 +69,9 @@ function updateSocialUI() {
 }
 
 function updateBossUI() {
+    if (!worldBoss || !worldBoss.hp) {
+        worldBoss = createWorldBoss();
+    }
     if (worldBoss) {
         let percent = (worldBoss.hp / worldBoss.maxHp) * 100;
         document.getElementById("bossHpBar").style.width = percent + "%";
@@ -121,10 +125,16 @@ function closeModal() {
 }
 
 // =========================
-// 事件日志分类
+// 事件日志分类（带日志队列）
 // =========================
+let eventLogs = [];
+
 function addEvent(msg, good = true) {
-    currentMsg = good ? `✨ ${msg}` : `💢 ${msg}`;
+    eventLogs.unshift((good ? "✨ " : "💢 ") + msg);
+    if (eventLogs.length > 8) {
+        eventLogs.pop();
+    }
+    currentMsg = eventLogs.join("<br>");
     updateUI();
 }
 
@@ -190,4 +200,4 @@ function showForum() {
         };
     });
     document.getElementById("closeForum").onclick = () => document.body.removeChild(modal);
-        }
+}
