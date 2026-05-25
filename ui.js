@@ -101,6 +101,25 @@ function createModal(title, content) {
     return modal;
 }
 
+// 通用模态框显示（接收HTML字符串）
+function showModal(html) {
+    let div = document.createElement("div");
+    div.className = "modal";
+    div.id = "globalModal";
+    div.innerHTML = `
+        <div class="modal-content">
+            ${html}
+        </div>
+    `;
+    document.body.appendChild(div);
+}
+
+// 关闭通用模态框
+function closeModal() {
+    let m = document.getElementById("globalModal");
+    if (m) m.remove();
+}
+
 // =========================
 // 事件日志分类
 // =========================
@@ -140,7 +159,7 @@ function autoRecover() {
 }
 
 // =========================
-// 论坛显示
+// 论坛显示（旧版，保留备用）
 // =========================
 function showForum() {
     let postsHtml = forumPosts.map(p => `
@@ -171,4 +190,4 @@ function showForum() {
         };
     });
     document.getElementById("closeForum").onclick = () => document.body.removeChild(modal);
-}
+        }
