@@ -8,7 +8,7 @@ const SAVE_KEY = "xiuxian_action_final";
 // 保存游戏
 // =========================
 function saveGame() {
-    const saveData = {
+    const saveData = JSON.parse(JSON.stringify({
         version: SAVE_VERSION,
         player: player,
         friends: friends,
@@ -20,7 +20,7 @@ function saveGame() {
         worldBoss: worldBoss,
         rankings: rankings,
         worldGeniuses: worldGeniuses
-    };
+    }));
     localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
 }
 
@@ -39,7 +39,8 @@ function loadGame() {
             console.log("存档版本不匹配，尝试兼容加载");
         }
         
-        player = { ...player, ...data.player };
+        // 使用默认玩家模板合并存档数据
+        player = Object.assign(createDefaultPlayer(), data.player);
         friends = data.friends || friends;
         playerAchievements = data.playerAchievements || [];
         gameReady = data.gameReady || false;
@@ -52,6 +53,10 @@ function loadGame() {
         
         // 确保buff数组存在
         if (!player.buffs) player.buffs = [];
+        // 确保装备结构正确
+        if (!player.equipped || typeof player.equipped !== 'object') {
+            player.equipped = { weapon: null, armor: null, ring: null, boots: null };
+        }
         
         updateUI();
         return true;
