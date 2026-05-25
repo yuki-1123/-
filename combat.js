@@ -211,4 +211,4 @@ function battle(enemy) {
         addBattleLog(`💀 被 ${enemy.name} 击败`, false);
         player.hp = Math.max(1, player.hp * 0.3);
     }
-}
+                                 }
