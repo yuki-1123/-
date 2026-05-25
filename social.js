@@ -264,8 +264,11 @@ function openForum() {
 }
 
 // =========================
-// 论坛按钮绑定
+// 论坛按钮绑定（使用 window.onload 确保 DOM 加载完成）
 // =========================
-if (document.getElementById("forumBtn")) {
-    document.getElementById("forumBtn").onclick = openForum;
-        }
+window.onload = function () {
+    let forumBtn = document.getElementById("forumBtn");
+    if (forumBtn) {
+        forumBtn.onclick = openForum;
+    }
+};
