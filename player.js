@@ -1,96 +1,68 @@
 // =========================
+// 默认玩家工厂函数
+// =========================
+function createDefaultPlayer() {
+    return {
+        name: "无名修士",
+        gender: "",
+        realmIdx: 0,
+        cultivation: 0,
+        hp: 100,
+        mp: 50,
+        rootType: 0,
+        elements: ["金"],
+        jobIdx: 0,
+        currentSect: "散修",
+        stones: 500,
+        highStones: 0,
+        bankStone: 0,
+        luck: 1,
+        fame: 1,
+        learn: 1,
+        profExp: 1,
+        comprehension: 1,
+        body: 1,
+        charm: 1,
+        reputation: 1,
+        mainSkill: null,
+        skills: [],
+        skillLevel: 1,
+        skillExp: 0,
+        skillTier: 0,
+        equipped: { weapon: null, armor: null, ring: null, boots: null },
+        inventory: [],
+        buffs: [],
+        partner: null,
+        partnerElements: null,
+        partnerSkill: null,
+        favor: 0,
+        contribution: 0,
+        rankIdx: 0,
+        pet: null,
+        honorTitle: "",
+        day: 1,
+        hour: 3,
+        age: 12,
+        actionPoints: 10,
+        maxActionPoints: 10,
+        washCount: 0,
+        rootRerollLeft: 3,
+        totalKills: 0,
+        totalDeaths: 0,
+        totalBossDamage: 0,
+        baiYuJingWins: 0,
+        achievements: [],
+        lifeSpan: 80,
+        ageFrozen: false,
+        talent: Math.floor(Math.random() * 100) + 1,
+        maxDungeonFloor: 1
+    };
+}
+
+// =========================
 // 玩家数据
 // =========================
-let player = {
-    // 基础
-    name: "无名修士",
-    gender: "",
-    
-    // 修炼
-    realmIdx: 0,
-    cultivation: 0,
-    hp: 100,
-    mp: 50,
-    
-    // 灵根
-    rootType: 0,
-    elements: ["金"],
-    
-    // 职业
-    jobIdx: 0,
-    currentSect: "散修",
-    
-    // 资源
-    stones: 500,
-    highStones: 0,
-    bankStone: 0,
-    
-    // 属性
-    luck: 1,
-    fame: 1,
-    learn: 1,
-    profExp: 1,
-    
-    // 新增属性
-    comprehension: 1,
-    body: 1,
-    charm: 1,
-    reputation: 1,
-    
-    // 功法
-    mainSkill: null,
-    skills: [],
-    skillLevel: 1,
-    skillExp: 0,
-    skillTier: 0,
-    
-    // 装备
-    equipped: null,
-    inventory: [],
-    buffs: [],
-    
-    // 社交
-    partner: null,
-    partnerElements: null,
-    partnerSkill: null,
-    favor: 0,
-    
-    // 宗门
-    contribution: 0,
-    rankIdx: 0,
-    
-    // 特殊
-    pet: null,
-    honorTitle: "",
-    
-    // 时间
-    day: 1,
-    hour: 3,
-    age: 12,
-    actionPoints: 10,
-    maxActionPoints: 10,
-    
-    // 灵根系统
-    washCount: 0,
-    rootRerollLeft: 3,
-    
-    // 数据统计
-    totalKills: 0,
-    totalDeaths: 0,
-    totalBossDamage: 0,
-    
-    // 白玉京
-    baiYuJingWins: 0,
-    
-    // 成就
-    achievements: [],
-    
-    // 寿命系统
-    lifeSpan: 80,
-    ageFrozen: false,
-    talent: Math.floor(Math.random() * 100) + 1,
-    maxDungeonFloor: 1
-};
+let player = createDefaultPlayer();
 
 // =========================
 // 好友数据
@@ -161,7 +133,10 @@ function generateElements(rootType) {
 function calcPower() {
     let realmPower = (player.realmIdx + 1) * 120;
     let rootPower = ROOT_BONUS[player.rootType] * 180;
-    let equipPower = player.equipped ? EQUIP_POWER[player.equipped.tier] || 0 : 0;
+    let equipPower = 0;
+    if (player.equipped && player.equipped.weapon) {
+        equipPower = EQUIP_POWER[player.equipped.weapon.tier] || 0;
+    }
     let skillPower = player.skillLevel * 35;
     let petPower = player.pet ? 120 : 0;
     let famePower = player.fame * 2;
@@ -179,8 +154,8 @@ function getAttrRank(value) {
     return { text: "凡俗之姿", color: "#777777" };
 }
 
-function getTalentTitle() {
-    return getAttrRank(player.talent).text;
+function getTalentTitle(value) {
+    return getAttrRank(value).text;
 }
 
 function getSkillDamageBonus() {
@@ -259,4 +234,4 @@ function generateTianjiao() {
     tianjiao.attack += player.realmIdx * 35;
     tianjiao.power = tianjiao.attack + Math.floor(tianjiao.hp / 10);
     return tianjiao;
-}
+        }
