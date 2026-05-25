@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>万道修仙 · 圣灵之境</title>
+    <style>
+        *{box-sizing:border-box;user-select:none;font-family:'Segoe UI','华文楷书',KaiTi,monospace;}
+        body{background:linear-gradient(145deg,#b8e1fc,#87ceeb);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:12px;margin:0;}
+        .game{max-width:800px;width:100%;background:#fffef7;border-radius:60px 40px;border:2px solid #f7d98c;overflow:hidden;box-shadow:0 20px 35px rgba(0,0,0,0.2);}
+        .head{background:linear-gradient(135deg,#ffefc0,#f7d98c);padding:10px;text-align:center;border-bottom:3px solid #e5b85c;}
+        .title{font-size:1.3rem;font-weight:bold;color:#6b4a1c;}
+        .sub{font-size:0.55rem;color:#a57c2e;}
+        .card{background:#fff8ef;margin:8px 10px;border-radius:32px;padding:8px 12px;border:1px solid #f5e1b0;}
+        .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:5px;margin:5px 0;}
+        .badge{background:#fff5e0;padding:2px 8px;border-radius:48px;font-size:0.72rem;color:#8a6020;border-left:3px solid #f5bc70;}
+        .stat-grid{display:flex;gap:6px;margin:6px 0;}
+        .stat{flex:1;background:#eef4ff;border-radius:28px;padding:3px;text-align:center;}
+        .stat-label{font-size:0.55rem;color:#5a6e4a;}
+        .stat-value{font-size:0.85rem;font-weight:bold;color:#c2852b;}
+        .bar-bg{background:#e0cfaa;border-radius:20px;height:6px;margin-top:4px;}
+        .bar-fill{width:0%;height:100%;background:linear-gradient(90deg,#f5c542,#ffb347);border-radius:20px;}
+        .event{background:#fef7e0;margin:6px 10px;border-radius:24px;padding:6px 12px;border-left:4px solid #f5bc70;font-size:0.7rem;}
+        .actions{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:6px 10px;}
+        .btn{background:#ffefc0;border:none;padding:4px;border-radius:60px;font-size:0.6rem;font-weight:bold;color:#5c3d1a;cursor:pointer;border-bottom:2px solid #dbb45c;}
+        .sec-btn{background:#f7e8cf;border:1px solid #e5b85c;padding:3px 10px;border-radius:40px;font-size:0.55rem;cursor:pointer;}
+        .footer{font-size:0.65rem;text-align:center;padding:5px;color:#b28b4b;background:#fff6e5;}
+        .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:1000;}
+        .modal-content{background:#fffaf0;border-radius:48px;padding:16px;max-width:450px;width:90%;max-height:80vh;overflow-y:auto;text-align:center;border:2px solid #fad17a;font-size:0.7rem;}
+        .choice-btn{background:#ffeaac;border:none;padding:6px 14px;margin:5px;border-radius:60px;font-size:0.7rem;cursor:pointer;}
+        .name-input{background:#fff8ef;border:2px solid #f5bc70;border-radius:40px;padding:8px 12px;width:80%;margin:10px 0;font-size:1rem;text-align:center;}
+        .forum-post{background:#fff2df;margin:10px 0;padding:10px;border-radius:24px;text-align:left;border-left:4px solid #ffbc6e;}
+        .forum-title{font-weight:bold;font-size:0.75rem;color:#8b5a2b;}
+        .forum-meta{font-size:0.55rem;color:#a08040;margin:4px 0;}
+        .forum-content{font-size:0.65rem;margin:6px 0;color:#5a4a2a;}
+        .reply-item{background:#fef7e8;margin:4px 0;padding:4px 8px;border-radius:20px;font-size:0.6rem;}
+        .reply-name{font-weight:bold;color:#7a4a1a;}
+        .time-badge{background:#e8d8b0;font-size:0.7rem;font-weight:bold;color:#6b4a1c;padding:2px 10px;border-radius:40px;}
+        .honor-badge{background:#f0d890;color:#8a5a1a;}
+        .job-select-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:10px 0;}
+        .save-load-bar{display:flex;gap:5px;justify-content:center;margin:5px 10px;flex-wrap:wrap;}
+        .ap-bar{background:#e8d8b0;border-radius:40px;padding:4px 12px;text-align:center;font-weight:bold;margin:0 10px;}
+        .btn:active{transform:scale(0.95);}
+        .choice-btn:active{transform:scale(0.95);}
+        .sec-btn:active{transform:scale(0.95);}
+        ::-webkit-scrollbar{width:0;}
+        @keyframes glow{0%{filter:brightness(1);}50%{filter:brightness(1.5) drop-shadow(0 0 10px gold);}100%{filter:brightness(1);}}
+        .legendary{color:#ff9900;font-weight:bold;}
+        .epic{color:#cc66ff;font-weight:bold;}
+        .god{color:#ff3333;font-weight:bold;text-shadow:0 0 8px red;}
+        .skill-normal{color:#ffffff;}
+        .skill-earth{color:#55dd55;}
+        .skill-heaven{color:#ff9933;}
+        .skill-god{color:#ff3333;text-shadow:0 0 6px red;}
+        .skill-immortal{color:#cc66ff;text-shadow:0 0 8px purple;}
+        #timeDisplay{
+            background:#fff8ef;
+            text-align:center;
+            font-size:0.75rem;
+            padding:4px;
+            margin:4px 10px;
+            border-radius:20px;
+            color:#8a5a2a;
+        }
+    </style>
+</head>
+<body>
+<div class="game">
+    <div id="timeDisplay"></div>
+    <div class="head"><div class="title">✨ 万道修仙 · 圣灵之境 ✨</div><div class="sub">行动点·背包可用·职业武器·论坛互怼</div></div>
+    <div class="card">
+        <div class="row"><span class="badge" id="rootBadge">🌿灵根未测</span><span class="badge" id="sectBadge">🏔️无门派</span><span class="badge" id="jobBadge">📿未选职业</span><span class="badge" id="petBadge">🐾无灵宠</span><span class="badge" id="equipBadge">⚔️无装备</span><span class="badge" id="rankBadge">🎽职阶:无</span></div>
+        <div class="row"><span class="badge" id="genderBadge">⚧未选</span><span class="badge" id="partnerBadge">💑道侣:无</span><span class="badge" id="favorBadge">💑好感0</span><span class="badge" id="friendBadge">👥好友2</span><span class="badge honor-badge" id="honorBadge">🏅尊号:无</span><span class="badge" id="skillBadge">📖无功法</span><span class="badge" id="skillLevelVal">📖0层</span><span class="badge" id="skillExpVal">✨0/0</span></div>
+        <div class="stat-grid">
+            <div class="stat"><div class="stat-label">❤️气血</div><div class="stat-value" id="hpVal">100</div></div>
+            <div class="stat"><div class="stat-label">💙灵力</div><div class="stat-value" id="mpVal">50</div></div>
+            <div class="stat"><div class="stat-label">⚔️总战力</div><div class="stat-value" id="powerVal">0</div></div>
+            <div class="stat"><div class="stat-label">💰灵石</div><div class="stat-value" id="stoneVal">500下品 / 0上品</div></div>
+        </div>
+        <div class="row"><span>🎲气运<span id="luckVal">5</span></span><span>📢声望<span id="fameVal">0</span></span><span>📖学问<span id="learnVal">0</span></span><span>⚙️熟练<span id="profVal">0</span></span><span>🗡️功法阶<span id="skillTier">0</span></span><span>🎂年龄<span id="ageVal">16</span></span><span>⏳寿元<span id="lifeVal">80</span></span><span>🌟资质<span id="talentVal">50</span></span><span>🗺️秘境<span id="floorVal">1层</span></span></div>
+        <div class="row"><span class="time-badge" id="dayDisplay">📅 第1天</span><span class="ap-bar" id="apDisplay">⚡行动点: 10/10</span><span class="time-badge" id="progressDisplay">🌊修为进度 <span id="expPercent">0%</span></span></div>
+        <div class="bar-bg"><div class="bar-fill" id="expFill"></div></div>
+    </div>
+    <div class="card">
+        <div id="bossName">🐉世界Boss·九幽魔龙</div>
+        <div class="bar-bg"><div class="bar-fill" id="bossHpBar" style="background:red;width:100%"></div></div>
+        <div id="bossHpText">50000 / 50000</div>
+    </div>
+    <div class="save-load-bar">
+        <button class="sec-btn" id="saveBtn">💾手动存档</button>
+        <button class="sec-btn" id="loadBtn">📀手动读档</button>
+        <button class="sec-btn" id="exportBtn">📤导出存档</button>
+        <button class="sec-btn" id="importBtn">📥导入存档</button>
+        <button class="sec-btn" id="clearSaveBtn">🗑️重置存档</button>
+    </div>
+    <div class="event" id="eventMsg">✨ 输入姓名 → 选性别 → 测灵根 → 选职业 → 入宗门 ✨</div>
+    <div class="actions">
+        <button class="btn" id="cultivateBtn">🌿吐纳</button><button class="btn" id="adventureBtn">⚔️秘境</button><button class="btn" id="taskBtn">📜任务</button>
+        <button class="btn" id="interactBtn">💬交友</button><button class="btn" id="giftBtn">🎁赠礼</button><button class="btn" id="alchemyBtn">⚗️炼丹</button>
+        <button class="btn" id="craftBtn">🔨炼器</button><button class="btn" id="libraryBtn">📚藏书阁</button><button class="btn" id="forumBtn">📰论坛</button>
+        <button class="btn" id="breakBtn">✨突破</button><button class="btn" id="washRootBtn">💊洗灵丹(2000)</button><button class="btn" id="mortalEventBtn">🏮凡界奇遇</button>
+        <button class="btn" id="sectWarBtn">⚔️宗门战</button><button class="btn" id="bossBtn">🐉世界BOSS</button><button class="btn" id="promoteRankBtn">🎽晋升职阶</button>
+        <button class="btn" id="nextDayBtn">🌙下一天</button><button class="btn" id="doubleCultBtn">💞双修</button>
+        <button class="btn" id="marketBtn">🏮坊市</button><button class="btn" id="partnerBtn">💍结侣</button><button class="btn" id="rankBtn">🏆排行榜</button>
+        <button class="btn" id="upgradeSkillBtn">📈升功法</button>
+        <button class="btn" id="bankBtn">🏦钱庄</button>
+        <button class="btn" id="exchangeBtn">💎兑换灵石</button>
+        <button class="btn" id="gambleBtn">🎲赌坊</button>
+        <button class="btn" id="baiyujingBtn">🌌白玉京</button>
+        <button class="btn" id="auctionBtn">🏛️拍卖会</button>
+        <button class="btn" id="baiRankBtn">🌌天骄榜</button>
+        <button id="bathBtn" class="btn">🛁沐浴</button>
+    </div>
+    <div class="row" style="justify-content:center;gap:5px;margin:5px 10px;">
+        <button class="sec-btn" id="bagBtn">🎒背包</button><button class="sec-btn" id="friendListBtn">👥好友圈</button>
+        <button class="sec-btn" id="achievementBtn">🏆成就</button>
+        <button class="sec-btn" id="resetBtn">🔄轮回</button>
+    </div>
+    <div class="footer">每天10个行动点 | 背包物品可装备/使用 | 秘境可出神品</div>
+</div>
+
+<script src="data.js"></script>
+<script src="player.js"></script>
+<script src="ui.js"></script>
+<script src="save.js"></script>
+<script src="combat.js"></script>
+
+<script src="init.js"></script>
+<script src="actions.js"></script>
+
+<script src="cultivate.js"></script>
+<script src="social.js"></script>
+<script src="market.js"></script>
+<script src="alchemy.js"></script>
+<script src="skill.js"></script>
+<script src="sect.js"></script>
+
+<script src="game.js"></script>
+</body>
+</html>
