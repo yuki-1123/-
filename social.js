@@ -268,4 +268,4 @@ function openForum() {
 // =========================
 if (document.getElementById("forumBtn")) {
     document.getElementById("forumBtn").onclick = openForum;
-                            }
+        }
