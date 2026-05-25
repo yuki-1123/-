@@ -1,4 +1,16 @@
 // =========================
+// 辅助函数
+// =========================
+function getAttrRank(v) {
+    if (v >= 100) { return { text: "天命之子", color: "gold" }; }
+    if (v >= 80) { return { text: "绝世天骄", color: "#ff66ff" }; }
+    if (v >= 60) { return { text: "仙路奇才", color: "#33ccff" }; }
+    if (v >= 40) { return { text: "资质尚可", color: "#55dd55" }; }
+    if (v >= 20) { return { text: "平平无奇", color: "#cccccc" }; }
+    return { text: "废材", color: "#777777" };
+}
+
+// =========================
 // 核心包装器和通用函数
 // =========================
 
@@ -14,22 +26,25 @@ function passTime() {
 
 function wrapAP(actionFunc) {
     return () => {
-        doAction(actionFunc);
-        passTime();
+        const success = doAction(actionFunc);
+        if (success) {
+            passTime();
+        }
     };
 }
 
 function doAction(callback) {
-    if (!gameReady) return;
+    if (!gameReady) return false;
     if (player.actionPoints <= 0) {
         addEvent("行动点不足，请点击「下一天」继续修炼！", false);
-        return;
+        return false;
     }
     callback();
     player.actionPoints--;
     autoRecover();
     saveGame();
     updateUI();
+    return true;
 }
 
 // 世界事件检查
@@ -133,7 +148,7 @@ function showBag() {
         btn.onclick = () => {
             let idx = parseInt(btn.dataset.index);
             let item = player.inventory[idx];
-            if (item.category === "weapon") { player.equipped = item; addEvent(`⚔️ 装备${item.name}`, true); }
+            if (item.category === "weapon") { player.equipped = { ...player.equipped, weapon: item }; addEvent(`⚔️ 装备${item.name}`, true); }
             document.body.removeChild(modal);
             updateUI();
         };
@@ -203,7 +218,7 @@ function showRootTestModal() {
     document.getElementById("acceptBtn").onclick = () => {
         player.rankIdx = getRankByRoot();
         player.elements = generateElements(player.rootType);
-        addEvent(`灵根【${ROOTS[player.rootType]}·${player.elements.join("/")}系】 | 资质【${getTalentTitle()}】(${player.talent})`, true);
+        addEvent(`灵根【${ROOTS[player.rootType]}·${player.elements.join("/")}系】 | 资质【${getTalentTitle(player.talent)}】(${player.talent})`, true);
         document.body.removeChild(modal);
         showJobModal();
     };
@@ -295,10 +310,14 @@ function showSectModal() {
 }
 
 // =========================
-// 事件绑定
+// 事件绑定（防止重复绑定）
 // =========================
+let eventsBound = false;
 
 function bindEvents() {
+    if (eventsBound) return;
+    eventsBound = true;
+    
     document.getElementById("cultivateBtn").onclick = wrapAP(cultivateAction);
     document.getElementById("adventureBtn").onclick = wrapAP(adventureAction);
     document.getElementById("taskBtn").onclick = wrapAP(taskAction);
@@ -307,7 +326,7 @@ function bindEvents() {
     document.getElementById("alchemyBtn").onclick = wrapAP(alchemyAction);
     document.getElementById("craftBtn").onclick = wrapAP(craftAction);
     document.getElementById("libraryBtn").onclick = wrapAP(libraryAction);
-    document.getElementById("forumBtn").onclick = () => { if (gameReady) showForum(); };
+    document.getElementById("forumBtn").onclick = () => { if (gameReady) openForum(); };
     document.getElementById("breakBtn").onclick = wrapAP(breakthroughAction);
     document.getElementById("washRootBtn").onclick = wrapAP(washRootAction);
     document.getElementById("mortalEventBtn").onclick = wrapAP(mortalEventAction);
@@ -349,19 +368,23 @@ setInterval(() => {
 }, 10000);
 
 // =========================
-// 启动游戏
+// 暴露给外部的初始化入口
 // =========================
-bindEvents();
+window.showCreatePlayerModal = startNewGame;
 
-if (loadGame() && player.name && player.currentSect) {
-    updateUI();
-    addEvent("📀 读取存档成功", true);
-} else {
-    localStorage.removeItem(SAVE_KEY);
-
-    player.age = 12;
-    player.day = 1;
-    player.hour = 3;
-
-    startNewGame();
-}
+// =========================
+// 启动游戏（DOMContentLoaded 避免与 window.onload 冲突）
+// =========================
+document.addEventListener("DOMContentLoaded", () => {
+    bindEvents();
+    if (loadGame() && player && player.name && player.currentSect) {
+        updateUI();
+        addEvent("📀 读取存档成功", true);
+    } else {
+        localStorage.removeItem(SAVE_KEY);
+        player.age = 12;
+        player.day = 1;
+        player.hour = 3;
+        startNewGame();
+    }
+});
